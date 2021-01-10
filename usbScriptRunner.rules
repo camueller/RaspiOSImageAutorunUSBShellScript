@@ -1,0 +1,2 @@
+ACTION=="add", KERNEL=="sd?1", SUBSYSTEMS=="usb", RUN+="/usr/local/bin/usbScriptRunner.sh add %k"
+ACTION=="remove", KERNEL=="sd?1", SUBSYSTEMS=="usb", RUN+="/usr/local/bin/usbScriptRunner.sh remove"
