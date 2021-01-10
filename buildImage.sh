@@ -27,29 +27,32 @@ echo "Decompressing image ..."
 unzip $COMPRESSE_IMAGE_FILE
 IMAGE_FILE=`find . -name *.img`
 
-#FAT32_PARTITION_OFFSET=`fdisk -l $IMAGE_FILE | grep FAT32 | awk '{print $2}'`
-#echo "FAT32 partition offset is $FAT32_PARTITION_OFFSET"
+FAT32_PARTITION_OFFSET=`fdisk -l $IMAGE_FILE | grep FAT32 | awk '{print $2}'`
+echo "FAT32 partition offset is $FAT32_PARTITION_OFFSET"
 
 LINUX_PARTITION_OFFSET=`fdisk -l $IMAGE_FILE | grep Linux | awk '{print $2}'`
 echo "Linux partition offset is $LINUX_PARTITION_OFFSET"
 
-#echo "Mounting FAT32 partition under $MOUNT_POINT ..."
-#mkdir $MOUNT_POINT
-#sudo mount -t auto -o loop,offset=$((FAT32_PARTITION_OFFSET * 512)) $IMAGE_FILE $MOUNT_POINT
+echo "Mounting FAT32 partition under $MOUNT_POINT ..."
+mkdir -p $MOUNT_POINT
+sudo mount -t auto -o loop,offset=$((FAT32_PARTITION_OFFSET * 512)) $IMAGE_FILE $MOUNT_POINT
 
-#echo "Enable SSH access"
-#sudo touch $MOUNT_POINT/ssh
+echo "Enable SSH access"
+sudo touch $MOUNT_POINT/ssh
 
-#echo "Unmounting FAT32 ..."
-#sudo umount $MOUNT_POINT
+echo "Unmounting FAT32 partition..."
+sudo umount $MOUNT_POINT
 
 echo "Mounting Linux partition under $MOUNT_POINT ..."
-mkdir $MOUNT_POINT
+mkdir -p $MOUNT_POINT
 sudo mount -t auto -o loop,offset=$((LINUX_PARTITION_OFFSET * 512)) $IMAGE_FILE $MOUNT_POINT
 
 echo "Allow shared mounts by udevd ..."
 # Refer to https://raspberrypi.stackexchange.com/questions/100312/raspberry-4-usbmount-not-working/100375#100375
-sudo sed -i 's/PrivateMounts\=yes/PrivateMounts\=no/g' /lib/systemd/system/systemd-udevd.service
+sudo sed -i 's/PrivateMounts\=yes/PrivateMounts\=no/g' $MOUNT_POINT/lib/systemd/system/systemd-udevd.service
+
+echo "Allow network access by udevd ..."
+sudo sed -i 's/IPAddressDeny\=any/IPAddressAllow\=any/g' $MOUNT_POINT/lib/systemd/system/systemd-udevd.service
 
 echo "Add udev rules ..."
 sudo cp usbScriptRunner.rules $MOUNT_POINT/etc/udev/rules.d/50-usbScriptRunner.rules
