@@ -51,9 +51,6 @@ echo "Allow shared mounts by udevd ..."
 # Refer to https://raspberrypi.stackexchange.com/questions/100312/raspberry-4-usbmount-not-working/100375#100375
 sudo sed -i 's/PrivateMounts\=yes/PrivateMounts\=no/g' $MOUNT_POINT/lib/systemd/system/systemd-udevd.service
 
-echo "Allow network access by udevd ..."
-sudo sed -i 's/IPAddressDeny\=any/IPAddressAllow\=any/g' $MOUNT_POINT/lib/systemd/system/systemd-udevd.service
-
 echo "Add udev rules ..."
 sudo cp usbScriptRunner.rules $MOUNT_POINT/etc/udev/rules.d/50-usbScriptRunner.rules
 
