@@ -18,13 +18,14 @@
 #
 IMAGE_URL=https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/2020-12-02-raspios-buster-armhf-lite.zip
 MOUNT_POINT=mnt
-COMPRESSE_IMAGE_FILE=raspios-buster-armhf-lite.zip
+COMPRESSE_IMAGE_INPUT_FILE=raspios-buster-armhf-lite.zip
+COMPRESSE_IMAGE_OUTPUT_FILE=raspios-buster-armhf-lite-usbrun.zip
 
 echo "Downloading Raspbian OS image from $IMAGE_URL ..."
-curl -o $COMPRESSE_IMAGE_FILE $IMAGE_URL
+curl -o $COMPRESSE_IMAGE_INPUT_FILE $IMAGE_URL
 
 echo "Decompressing image ..."
-unzip $COMPRESSE_IMAGE_FILE
+unzip $COMPRESSE_IMAGE_INPUT_FILE
 IMAGE_FILE=`find . -name *.img`
 
 FAT32_PARTITION_OFFSET=`fdisk -l $IMAGE_FILE | grep FAT32 | awk '{print $2}'`
@@ -59,3 +60,6 @@ sudo cp usbScriptRunner.sh $MOUNT_POINT/usr/local/bin
 
 echo "Unmounting Linux partition ..."
 sudo umount $MOUNT_POINT
+
+echo "Compressing image ..."
+zip $COMPRESSE_IMAGE_OUTPUT_FILE *.img
