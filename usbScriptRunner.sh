@@ -15,8 +15,7 @@ case $ACTION in
      echo 0 > $POWER_LED
      ;;
    "remove")
-     sudo umount /media
-     poweroff
+     shutdown -r now
      ;;
    *)
      echo "Usage: <add|remove> <device name>"
