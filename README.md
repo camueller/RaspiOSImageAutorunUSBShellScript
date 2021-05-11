@@ -11,7 +11,7 @@ The **modified image** is provided as release with release number matching the r
 
 The modified image enables fully unattended installation of software on top of a fresh Raspberry Pi OS image.
 
-# More details
+## More details
 
 Once a USB flash drive is connected to the Raspberry Pi the `udev` daemon executes the shell script [usbScriptRunner.sh](usbScriptRunner.sh) which:
 - mounts the USB flash drive
@@ -21,7 +21,7 @@ Once a USB flash drive is connected to the Raspberry Pi the `udev` daemon execut
 
 Once the USB flash drive is disconnected from the Raspberry Pi the shell script [usbScriptRunner.sh](usbScriptRunner.sh) triggers a reboot of the Raspberry Pi.
 
-# Example
+## Example
   
 The project [Smart Appliance Enabler](https://github.com/camueller/SmartApplianceEnabler) uses the modified image for a two phase install. For the installation process the following files have to be placed on a USB flash drive:
 
@@ -32,5 +32,5 @@ The project [Smart Appliance Enabler](https://github.com/camueller/SmartApplianc
 - [install2.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/install2.sh) is executed from `/etc/rc.local` after Reboot and represents the second installation phase. It updates all packages, installs additional packages and downloads/installs/configures additional software. Finally it restores the original `/etc/rc.local` and performs clean up.
 - [install.config](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/install.config) contains a few parameters users may change to configure the installation process
 
-# TODO
+## TODO
 - automatic checking for new Raspberry Pi OS build and subsequent created of a corresponding modified image
