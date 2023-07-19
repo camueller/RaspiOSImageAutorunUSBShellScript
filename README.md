@@ -2,6 +2,7 @@
 
 The shell script [buildImage.sh](buildImage.sh) downloads a [Raspberry Pi OS](https://www.raspberrypi.org/software/operating-systems) image and does the following modifications:
 - enable SSH
+- create default user "pi" (password: "raspberry")
 - add a [udev rule](usbScriptRunner.rules) to trigger execution of the shell script [usbScriptRunner.sh](usbScriptRunner.sh) when an USB flash drive is connected/disconnected
 - copy the shell script [usbScriptRunner.sh](usbScriptRunner.sh) to `/usr/local/bin` on the image
 

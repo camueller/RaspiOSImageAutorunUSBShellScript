@@ -3,7 +3,7 @@ MOUNT_POINT=/media
 INSTALL_DIR=/tmp
 ACTION=$1
 DEVICE=$2
-POWER_LED=/sys/class/leds/led1/brightness
+POWER_LED=/sys/class/leds/PWR/brightness
 
 case $ACTION in
   "add")

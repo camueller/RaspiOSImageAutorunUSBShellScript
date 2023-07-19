@@ -16,16 +16,16 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-IMAGE_URL=https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2022-01-28/2022-01-28-raspios-bullseye-armhf-lite.zip
+IMAGE_URL=https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2023-05-03/2023-05-03-raspios-bullseye-armhf-lite.img.xz
 MOUNT_POINT=mnt
-COMPRESSE_IMAGE_INPUT_FILE=`basename $IMAGE_URL`
-COMPRESSE_IMAGE_OUTPUT_FILE=`echo $COMPRESSE_IMAGE_INPUT_FILE | sed 's/lite/lite-usbrun/g'`
+COMPRESSED_IMAGE_INPUT_FILE=`basename $IMAGE_URL`
+COMPRESSED_IMAGE_OUTPUT_FILE=`echo $COMPRESSED_IMAGE_INPUT_FILE | sed 's/lite.img.xz/lite-usbrun.img.zip/g'`
 
 echo "Downloading Raspbian OS image from $IMAGE_URL ..."
-curl -o $COMPRESSE_IMAGE_INPUT_FILE $IMAGE_URL
+curl -o $COMPRESSED_IMAGE_INPUT_FILE $IMAGE_URL
 
 echo "Decompressing image ..."
-unzip $COMPRESSE_IMAGE_INPUT_FILE
+xz -d $COMPRESSED_IMAGE_INPUT_FILE
 IMAGE_FILE=`find . -name *.img`
 
 FAT32_PARTITION_OFFSET=`fdisk -l $IMAGE_FILE | grep FAT32 | awk '{print $2}'`
@@ -40,6 +40,10 @@ sudo mount -t auto -o loop,offset=$((FAT32_PARTITION_OFFSET * 512)) $IMAGE_FILE 
 
 echo "Enable SSH access"
 sudo touch $MOUNT_POINT/ssh
+
+echo "Create default user"
+sudo bash -c "echo -n 'pi:' > $MOUNT_POINT/userconf"
+sudo bash -c "echo "raspberry" | openssl passwd -6 -stdin >> mnt/userconf >> $MOUNT_POINT/userconf"
 
 echo "Unmounting FAT32 partition..."
 sudo umount $MOUNT_POINT
@@ -62,4 +66,4 @@ echo "Unmounting Linux partition ..."
 sudo umount $MOUNT_POINT
 
 echo "Compressing image ..."
-zip $COMPRESSE_IMAGE_OUTPUT_FILE *.img
+zip $COMPRESSED_IMAGE_OUTPUT_FILE *.img
