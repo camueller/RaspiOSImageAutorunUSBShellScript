@@ -16,7 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-IMAGE_URL=https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2023-05-03/2023-05-03-raspios-bullseye-armhf-lite.img.xz
+IMAGE_URL=https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-12-11/2023-12-11-raspios-bookworm-armhf-lite.img.xz
 MOUNT_POINT=mnt
 COMPRESSED_IMAGE_INPUT_FILE=`basename $IMAGE_URL`
 COMPRESSED_IMAGE_OUTPUT_FILE=`echo $COMPRESSED_IMAGE_INPUT_FILE | sed 's/lite.img.xz/lite-usbrun.img.zip/g'`
@@ -24,7 +24,7 @@ COMPRESSED_IMAGE_OUTPUT_FILE=`echo $COMPRESSED_IMAGE_INPUT_FILE | sed 's/lite.im
 echo "Downloading Raspbian OS image from $IMAGE_URL ..."
 curl -o $COMPRESSED_IMAGE_INPUT_FILE $IMAGE_URL
 
-echo "Decompressing image ..."
+echo "Decompressing image from $COMPRESSED_IMAGE_INPUT_FILE ..."
 xz -d $COMPRESSED_IMAGE_INPUT_FILE
 IMAGE_FILE=`find . -name *.img`
 
@@ -52,9 +52,10 @@ echo "Mounting Linux partition under $MOUNT_POINT ..."
 mkdir -p $MOUNT_POINT
 sudo mount -t auto -o loop,offset=$((LINUX_PARTITION_OFFSET * 512)) $IMAGE_FILE $MOUNT_POINT
 
-echo "Allow shared mounts by udevd ..."
+echo "Allow script execution by udevd ..."
 # Refer to https://raspberrypi.stackexchange.com/questions/100312/raspberry-4-usbmount-not-working/100375#100375
 sudo sed -i 's/PrivateMounts\=yes/PrivateMounts\=no/g' $MOUNT_POINT/lib/systemd/system/systemd-udevd.service
+sudo sed -i 's/SystemCallFilter\=/# SystemCallFilter\=/g' $MOUNT_POINT/lib/systemd/system/systemd-udevd.service
 
 echo "Add udev rules ..."
 sudo cp usbScriptRunner.rules $MOUNT_POINT/etc/udev/rules.d/50-usbScriptRunner.rules
